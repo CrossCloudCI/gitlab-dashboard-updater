@@ -12,6 +12,9 @@
 
 require 'json'
 require 'faraday'
+require 'base64'
+require 'securerandom'
+require 'jwt'
 require 'pp'
 
 dashboard_api_host_port = nil
@@ -92,8 +95,37 @@ json_data=<<-EOD
 }
 EOD
 
+
+def jwt(token)
+	JWT.encode(jwt_claims(token), ENV['JWT_KEY'], 'HS256')
+end
+
+
+def jwt_claims(token)
+	jwt_issuer=ENV["JWT_ISSUER"]
+	{
+		iss: jwt_issuer,
+	}
+end
+
+def enable_jwt?
+	 ENV["ENABLE_JWT"].nil? ? false : true
+end
+
 cidashboard = Faraday.new(:url => dashboard_api_url)
-cidashboard.post do |req|
-  req.headers['Content-Type'] = 'application/json'
-  req.body = json_data
+
+if enable_jwt?
+  encoded_token = Base64.urlsafe_encode64(SecureRandom.random_bytes(32))
+	token = jwt(encoded_token)
+	cidashboard.post do |req|
+		req.headers['Content-Type'] = 'application/json'
+    req.headers['Authorization'] = "Bearer #{token}"
+		req.body = json_data
+	end
+
+else
+	cidashboard.post do |req|
+		req.headers['Content-Type'] = 'application/json'
+		req.body = json_data
+	end
 end
