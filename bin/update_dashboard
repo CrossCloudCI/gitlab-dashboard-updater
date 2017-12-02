@@ -36,25 +36,25 @@ end
 puts "Running update_dashboard for job #{ENV['CI_JOB_NAME']}" if ENV['CI_JOB_NAME']
 
 # Set DEFAULT_DASHBOARD_API_HOST_PORT in environment (eg. testdashboard.vu.lk:90292 )
+#
 
-if ENV["DASHBOARD_API_HOST_PORT"].nil? and not ENV["GITLAB_USER_EMAIL"].nil?
-  case ENV["GITLAB_USER_EMAIL"]
-  when ENV["LUCINA_EMAIL"]
-    dashboard_api_host_port=ENV["LUCINA_DASHBOARD_API_HOST_PORT"] if ENV["LUCINA_DASHBOARD_API_HOST_PORT"]
-  when ENV["WAVELL_EMAIL"]
-    dashboard_api_host_port=ENV["WAVELL_DASHBOARD_API_HOST_PORT"] if ENV["WAVELL_DASHBOARD_API_HOST_PORT"]
-  when ENV["JOSH_EMAIL"]
-    dashboard_api_host_port=ENV["JOSH_DASHBOARD_API_HOST_PORT"] if ENV["JOSH_DASHBOARD_API_HOST_PORT"]
-  when ENV["TAYLOR_EMAIL"]
-    dashboard_api_host_port=ENV["TAYLOR_DASHBOARD_API_HOST_PORT"] if ENV["TAYLOR_DASHBOARD_API_HOST_PORT"]
-  when ENV["DENVER_EMAIL"]
-    dashboard_api_host_port=ENV["DENVER_DASHBOARD_API_HOST_PORT"] if ENV["DENVER_DASHBOARD_API_HOST_PORT"]
-  when ENV["ANDRE_EMAIL"]
-    dashboard_api_host_port=ENV["ANDRE_DASHBOARD_API_HOST_PORT"] if ENV["ANDRE_DASHBOARD_API_HOST_PORT"]
-  end
-elsif not ENV["DASHBOARD_API_HOST_PORT"].nil?
+dashboard_api_host_port=nil
+
+# If the Dashboard host and port is set then use that
+if not ENV["DASHBOARD_API_HOST_PORT"].nil?
   dashboard_api_host_port=ENV["DASHBOARD_API_HOST_PORT"]
-else
+
+# Else check for users api hosts settings
+elsif ENV["DASHBOARD_API_HOST_PORT"].nil? and not ENV["GITLAB_USER_EMAIL"].nil?
+  if File.exists?('dev_users.rb')
+    require_relative 'dev_users.rb'
+    dashboard_api_host_port = load_users_api_host_port
+  end
+
+end
+
+# Else use the default API host (if it is set)
+if dashboard_api_host_port.nil?
   dashboard_api_host_port=ENV["DEFAULT_DASHBOARD_API_HOST_PORT"] unless ENV["DEFAULT_DASHBOARD_API_HOST_PORT"].nil?
 end
 
@@ -109,12 +109,15 @@ def jwt_claims(token)
 end
 
 def enable_jwt?
-	 ENV["ENABLE_JWT"].nil? ? false : true
+  return false if ENV["ENABLE_JWT"].nil?
+
+  ENV["ENABLE_JWT"] == 1 ?  true : false
 end
 
 cidashboard = Faraday.new(:url => dashboard_api_url)
 
 if enable_jwt?
+  puts "JWT enabled"
   encoded_token = Base64.urlsafe_encode64(SecureRandom.random_bytes(32))
 	token = jwt(encoded_token)
 	cidashboard.post do |req|
@@ -124,6 +127,7 @@ if enable_jwt?
 	end
 
 else
+  puts "JWT disabled"
 	cidashboard.post do |req|
 		req.headers['Content-Type'] = 'application/json'
 		req.body = json_data
