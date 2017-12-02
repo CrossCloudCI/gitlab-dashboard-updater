@@ -108,28 +108,31 @@ def jwt_claims(token)
 	}
 end
 
-def enable_jwt?
-  return false if ENV["ENABLE_JWT"].nil?
+def jwt_disabled?
+  return false if ENV["JWT_DISABLED"].nil?
 
-  ENV["ENABLE_JWT"] == 1 ?  true : false
+  if ENV["JWT_DISABLED"].to_i == 1
+    return true
+  else
+    return false
+  end
 end
 
 cidashboard = Faraday.new(:url => dashboard_api_url)
 
-if enable_jwt?
+if jwt_disabled?
+  puts "JWT disabled"
+	cidashboard.post do |req|
+		req.headers['Content-Type'] = 'application/json'
+		req.body = json_data
+	end
+else
   puts "JWT enabled"
   encoded_token = Base64.urlsafe_encode64(SecureRandom.random_bytes(32))
 	token = jwt(encoded_token)
 	cidashboard.post do |req|
 		req.headers['Content-Type'] = 'application/json'
     req.headers['Authorization'] = "Bearer #{token}"
-		req.body = json_data
-	end
-
-else
-  puts "JWT disabled"
-	cidashboard.post do |req|
-		req.headers['Content-Type'] = 'application/json'
 		req.body = json_data
 	end
 end
