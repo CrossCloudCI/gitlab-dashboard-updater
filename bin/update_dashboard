@@ -38,7 +38,8 @@ source_project_id = nil
 source_pipeline_id = nil
 pipeline_release_type = nil
 source_pipeline_job_id = nil
-target_project_name=nil
+target_project_name = nil
+project_build_pipeline_id = nil
 
 response = Faraday.get cross_cloud_config_url
 
@@ -128,17 +129,17 @@ json_data=<<-EOD
     {
       "source_project_id":"#{source_project_id}",
       "source_pipeline_id":"#{source_pipeline_id}",
+      "source_pipeline_job_id":"#{source_pipeline_job_id}",
       "pipeline_release_type":"#{pipeline_release_type}",
-      "source_pipeline_job_id":"#{source_pipeline_job_id}"
+      "project_build_pipeline_id":"#{project_build_pipeline_id}",
+      "target_project_name":"#{target_project_name}"
     }
 }
 EOD
 
-
 def jwt(token)
 	JWT.encode(jwt_claims(token), ENV['JWT_KEY'], 'HS256')
 end
-
 
 def jwt_claims(token)
 	jwt_issuer=ENV["JWT_ISSUER"]
