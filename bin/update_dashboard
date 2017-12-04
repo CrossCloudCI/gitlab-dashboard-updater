@@ -50,12 +50,28 @@ end
 
 check_required(cross_cloud_config, "ERROR: cross-cloud configuration empty/undefined", 1)
 
+
+# The child pipeline is set for cross-cloud for projects that are on the app layer eg. CoreDNS
+# (cross-cloud.yml app_layer: true)
+# Kubernetes will set it to false
+# Default: true
+child_pipeline=true
+
 ## GitLab environment settings
 case ENV["CI_PROJECT_NAME"]
 when "cross-cloud", "cross-project"
   target_project_name=ENV["TARGET_PROJECT_NAME"]
   project_build_pipeline_id=ENV["PROJECT_BUILD_PIPELINE_ID"]
   check_required(project_build_pipeline_id, "ERROR: target project build pipeline id required", 1)
+
+  if ENV["CI_PROJECT_NAME"] == "cross-cloud"
+    app_layer=cross_cloud_config["projects"][target_project_name.downcase]["app_layer"]
+
+    if app_layer.nil? or app_layer != "true"
+      # Eg. Kubernetes or CNI
+      child_pipeline=false
+    end
+  end
 else
   target_project_name=ENV["CI_PROJECT_NAME"]
 end
@@ -131,7 +147,8 @@ json_data=<<-EOD
       "source_pipeline_job_id":"#{source_pipeline_job_id}",
       "pipeline_release_type":"#{pipeline_release_type}",
       "project_build_pipeline_id":"#{project_build_pipeline_id}",
-      "target_project_name":"#{target_project_name}"
+      "target_project_name":"#{target_project_name}",
+      "child_pipeline":"#{child_pipeline}"
     }
 }
 EOD
