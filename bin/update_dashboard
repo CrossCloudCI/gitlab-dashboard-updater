@@ -23,6 +23,18 @@ source_pipeline_id = nil
 pipeline_release_type = nil
 source_pipeline_job_id = nil
 
+cross_cloud_config_url="https://gitlab.cncf.ci/cncf/cross-cloud/raw/ci-stable-v0.1.0/cross-cloud.yml"
+
+pp cross_cloud_config_url
+response = Faraday.get cross_cloud_config_url
+
+if response.nil?
+  puts "ERROR: failed to retrieve cross-cloud configuration"
+  exit 1
+else
+  cross_cloud_config = YAML.parse(reponse.body).to_ruby
+end
+
 ## GitLab
 case ENV["CI_COMMIT_REF_NAME"]
 when ENV["DASHBOARD_HEAD_REF_NAME"]
