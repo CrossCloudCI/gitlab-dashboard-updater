@@ -108,11 +108,12 @@ if not ENV["DASHBOARD_API_HOST_PORT"].nil?
 
 # Else check for users api hosts settings
 elsif ENV["DASHBOARD_API_HOST_PORT"].nil? and not ENV["GITLAB_USER_EMAIL"].nil?
-  if File.exists?('dev_users.rb')
-    require_relative 'dev_users.rb'
+  begin
+    require_relative 'dev_users.rb' if File.exists?('dev_users.rb')
     dashboard_api_host_port = load_users_api_host_port
+  rescue LoadError
+    # Ignoring load errors, dev users is optional
   end
-
 end
 
 # Else use the default API host (if it is set)
