@@ -58,6 +58,7 @@ check_required(cross_cloud_config, "ERROR: cross-cloud configuration empty/undef
 child_pipeline=true
 
 ## GitLab environment settings
+## child pipeline identified
 case ENV["CI_PROJECT_NAME"]
 when "cross-cloud", "cross-project"
   target_project_name=ENV["TARGET_PROJECT_NAME"]
@@ -66,6 +67,8 @@ when "cross-cloud", "cross-project"
 
   if ENV["CI_PROJECT_NAME"] == "cross-cloud"
     app_layer=cross_cloud_config["projects"][target_project_name.downcase]["app_layer"]
+
+    pp "app_layer: #{app_layer}"
 
     if app_layer.nil? or app_layer != "true"
       # Eg. Kubernetes or CNI
