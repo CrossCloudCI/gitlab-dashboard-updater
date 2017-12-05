@@ -54,36 +54,43 @@ check_required(cross_cloud_config, "ERROR: cross-cloud configuration empty/undef
 # The child pipeline is set for cross-cloud for projects that are on the app layer eg. CoreDNS
 # (cross-cloud.yml app_layer: true)
 # Kubernetes will set it to false
-# Default: true
-child_pipeline=true
+# Default: false
+child_pipeline=false
 
 ## GitLab environment settings
-## child pipeline identified
+
+## Git the current project related to the pipeline that is running
 case ENV["CI_PROJECT_NAME"]
 when "cross-cloud", "cross-project"
   target_project_name=ENV["TARGET_PROJECT_NAME"]
   project_build_pipeline_id=ENV["PROJECT_BUILD_PIPELINE_ID"]
-  check_required(project_build_pipeline_id, "ERROR: target project build pipeline id required", 1)
+
+  check_required(target_project_name, "ERROR: target project name required -- not available from TARGET_PROJECT_NAME", 1)
+  check_required(project_build_pipeline_id, "ERROR: target project build pipeline id required -- not available from env PROJECT_BUILD_PIPELINE_ID", 1)
 
   if ENV["CI_PROJECT_NAME"] == "cross-cloud"
     app_layer=cross_cloud_config["projects"][target_project_name.downcase]["app_layer"]
 
     pp "app_layer: #{app_layer}"
 
-    if app_layer.nil? or app_layer != "true"
+    if app_layer and app_layer == "true"
+      child_pipeline=true
+    else
       # Eg. Kubernetes or CNI
       child_pipeline=false
     end
+  elsif ENV["CI_PROJECT_NAME"] == "cross-project"
+    child_pipeline=false
   end
-
 else
+  child_pipeline=false
   target_project_name=ENV["CI_PROJECT_NAME"]
   project_build_pipeline_id=ENV["CI_PIPELINE_ID"]
+  check_required(target_project_name, "ERROR: target project name required -- not available from CI_PROJECT_NAME", 1)
 end
 
 puts "Project build pipeline id: #{project_build_pipeline_id}"
 
-check_required(target_project_name, "ERROR: target project name required -- not available from CI_PROJECT_NAME nor  TARGET_PROJECT_NAME", 1)
 
 
 # Set stable and head ref based on project name
