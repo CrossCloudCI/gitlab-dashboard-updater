@@ -89,13 +89,15 @@ head_ref=cross_cloud_config["projects"][target_project_name.downcase]["head_ref"
 check_required(stable_ref, "ERROR: stable ref not set for project #{target_project_name}", 1)
 check_required(head_ref, "ERROR: head ref not set for project #{target_project_name}", 1)
 
-case ENV["CI_COMMIT_REF_NAME"]
+#case ENV["CI_COMMIT_REF_NAME"]
+
+case ENV["TARGET_PROJECT_COMMIT_REF_NAME"]
 when head_ref
   pipeline_release_type="head"
 when stable_ref
   pipeline_release_type="stable"
 else
-  puts "WARNING: release type unknown ('#{ENV['CI_COMMIT_REF_NAME']}') -- skipping update and exiting"
+  puts "WARNING: release type unknown ('#{ENV['TARGET_PROJECT_COMMIT_REF_NAME']}') -- skipping update and exiting"
   pipeline_release_type="unknown"
   exit 0
 end
