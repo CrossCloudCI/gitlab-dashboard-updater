@@ -153,6 +153,8 @@ check_required(source_pipeline_job_id, "Set CI_JOB_ID environment setting", 1)
 
 dashboard_api_url="http://#{dashboard_api_host_port}/api/source_key_project_monitor"
 
+puts "Project build pipeline id: #{project_build_pipeline_id}"
+
 json_data=<<-EOD
 {
   "source_key_project_monitor":
@@ -167,6 +169,8 @@ json_data=<<-EOD
     }
 }
 EOD
+
+puts "json_data: #{json_data}"
 
 def jwt(token)
 	JWT.encode(jwt_claims(token), ENV['JWT_KEY'], 'HS256')
