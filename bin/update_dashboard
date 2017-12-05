@@ -109,10 +109,14 @@ if not ENV["DASHBOARD_API_HOST_PORT"].nil?
 # Else check for users api hosts settings
 elsif ENV["DASHBOARD_API_HOST_PORT"].nil? and not ENV["GITLAB_USER_EMAIL"].nil?
   begin
-    require_relative 'dev_users.rb' if File.exists?('dev_users.rb')
-    dashboard_api_host_port = load_users_api_host_port
+    if File.exists?('bin/dev_users.rb')
+      require_relative 'dev_users.rb' 
+      include CrossCloudCI::DashboardUtils
+      dashboard_api_host_port = CrossCloudCI::DashboardUtils.load_users_api_host_port
+    end 
   rescue LoadError
     # Ignoring load errors, dev users is optional
+    puts "WARNING: faied to load dev users"
   end
 end
 
