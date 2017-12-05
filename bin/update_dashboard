@@ -75,6 +75,7 @@ when "cross-cloud", "cross-project"
 
 else
   target_project_name=ENV["CI_PROJECT_NAME"]
+  project_build_pipeline_id=ENV["CI_PIPELINE_ID"]
 end
 
 puts "Project build pipeline id: #{project_build_pipeline_id}"
