@@ -152,11 +152,14 @@ source_pipeline_id = ENV["CI_PIPELINE_ID"]
 pipeline_release_type = ENV["PIPELINE_RELEASE_TYPE"] if pipeline_release_type.nil? and not ENV["PIPELINE_RELEASE_TYPE"].nil?
 source_pipeline_job_id = ENV["CI_JOB_ID"]
 
+target_cloud=ENV["CLOUD"]
+
 check_required(dashboard_api_host_port, "Set DASHBOARD_API_HOST_PORT / DEFAULT_DASHBOARD_API_HOST_PORT environment setting", 1)
 check_required(source_project_id, "Set CI_PROJECT_ID environment setting", 1)
 check_required(source_pipeline_id,"Set CI_PIPELINE_ID environment setting", 1)
 check_required(pipeline_release_type, "Set PIPELINE_RELEASE_TYPE environment setting", 1)
 check_required(source_pipeline_job_id, "Set CI_JOB_ID environment setting", 1)
+check_required(target_cloud, "Set CLOUD environment setting", 1)
 
 dashboard_api_url="http://#{dashboard_api_host_port}/api/source_key_project_monitor"
 
@@ -172,7 +175,8 @@ json_data=<<-EOD
       "pipeline_release_type":"#{pipeline_release_type}",
       "project_build_pipeline_id":"#{project_build_pipeline_id}",
       "target_project_name":"#{target_project_name}",
-      "child_pipeline":"#{child_pipeline}"
+      "child_pipeline":"#{child_pipeline}",
+      "cloud":"#{target_cloud}"
     }
 }
 EOD
