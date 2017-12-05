@@ -73,10 +73,11 @@ when "cross-cloud", "cross-project"
     end
   end
 
-  puts "Project build pipeline id: #{project_build_pipeline_id}"
 else
   target_project_name=ENV["CI_PROJECT_NAME"]
 end
+
+puts "Project build pipeline id: #{project_build_pipeline_id}"
 
 check_required(target_project_name, "ERROR: target project name required -- not available from CI_PROJECT_NAME nor  TARGET_PROJECT_NAME", 1)
 
