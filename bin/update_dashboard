@@ -121,10 +121,8 @@ if not ENV["DASHBOARD_API_HOST_PORT"].nil?
   dashboard_api_host_port=ENV["DASHBOARD_API_HOST_PORT"]
 
 # Else check for users api hosts settings
-elsif ENV["DASHBOARD_API_HOST_PORT"].nil? and not ENV["GITLAB_USER_EMAIL"].nil?
-  if ENV["BASE_URL"] == "https://gitlab.dev.cncf.ci"
-    puts "Checking settings for dev user #{ENV['GITLAB_USER_EMAIL']}"
-  end
+elsif ENV["DASHBOARD_API_HOST_PORT"].nil? and not ENV["GITLAB_USER_EMAIL"].nil? and ENV["BASE_URL"] == "https://gitlab.dev.cncf.ci"
+  puts "Checking settings for dev user #{ENV['GITLAB_USER_EMAIL']}"
 
   begin
     if File.exists?('bin/dev_users.rb')
@@ -140,7 +138,13 @@ end
 
 # Else use the default API host (if it is set)
 if dashboard_api_host_port.nil?
-  dashboard_api_host_port=ENV["DEFAULT_DASHBOARD_API_HOST_PORT"] unless ENV["DEFAULT_DASHBOARD_API_HOST_PORT"].nil?
+  if ENV["BASE_URL"] == "https://gitlab.staging.cncf.ci"
+    dashboard_api_host_port=ENV["STAGING_DASHBOARD_API_HOST_PORT"] unless ENV["STAGING_DASHBOARD_API_HOST_PORT"].nil?
+  elsif ENV["BASE_URL"] == "https://gitlab.cncf.ci"
+    dashboard_api_host_port=ENV["PRODUCTION_DASHBOARD_API_HOST_PORT"] unless ENV["PRODUCTION_DASHBOARD_API_HOST_PORT"].nil?
+  else
+    dashboard_api_host_port=ENV["DEFAULT_DASHBOARD_API_HOST_PORT"] unless ENV["DEFAULT_DASHBOARD_API_HOST_PORT"].nil?
+  end
 end
 
 puts "Using Dashboard API server #{dashboard_api_host_port}"
