@@ -108,6 +108,10 @@ if not ENV["DASHBOARD_API_HOST_PORT"].nil?
 
 # Else check for users api hosts settings
 elsif ENV["DASHBOARD_API_HOST_PORT"].nil? and not ENV["GITLAB_USER_EMAIL"].nil?
+  if ENV["BASE_URL"] == "https://gitlab.dev.cncf.ci"
+    puts "Checking settings for dev user #{ENV['GITLAB_USER_EMAIL']}"
+  end
+
   begin
     if File.exists?('bin/dev_users.rb')
       require_relative 'dev_users.rb' 
