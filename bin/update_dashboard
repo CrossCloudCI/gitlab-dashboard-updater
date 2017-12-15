@@ -19,7 +19,14 @@ require 'securerandom'
 require 'jwt'
 require 'pp'
 
-cross_cloud_config_url="https://gitlab.cncf.ci/cncf/cross-cloud/raw/ci-stable-v0.1.0/cross-cloud.yml"
+
+# If the Dashboard host and port is set then use that
+if not ENV["CROSS_CLOUD_YML"].nil?
+  cross_cloud_config_url=ENV"[CROSS_CLOUD_YML]"
+else
+  puts "CROSS_CLOUD_YML is not set"
+  exit 0
+end
 
 ##############################################################################
 
