@@ -22,7 +22,7 @@ require 'pp'
 
 # If the Dashboard host and port is set then use that
 if not ENV["CROSS_CLOUD_YML"].nil?
-  cross_cloud_config_url=ENV"[CROSS_CLOUD_YML]"
+  cross_cloud_config_url=ENV["CROSS_CLOUD_YML"]
 else
   puts "CROSS_CLOUD_YML is not set"
   exit 0
