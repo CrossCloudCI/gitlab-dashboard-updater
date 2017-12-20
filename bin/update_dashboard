@@ -20,14 +20,6 @@ require 'jwt'
 require 'pp'
 
 
-# If the Dashboard host and port is set then use that
-if not ENV["CROSS_CLOUD_YML"].nil?
-  cross_cloud_config_url=ENV["CROSS_CLOUD_YML"]
-else
-  puts "CROSS_CLOUD_YML is not set"
-  exit 0
-end
-
 ##############################################################################
 
 def check_required(var, msg, exitstatus)
@@ -45,6 +37,14 @@ pipeline_release_type = nil
 source_pipeline_job_id = nil
 target_project_name = nil
 project_build_pipeline_id = nil
+
+# If the Dashboard host and port is set then use that
+if not ENV["CROSS_CLOUD_YML"].nil?
+  cross_cloud_config_url=ENV["CROSS_CLOUD_YML"]
+else
+  puts "CROSS_CLOUD_YML is not set"
+  exit 0
+end
 
 response = Faraday.get cross_cloud_config_url
 
@@ -134,32 +134,16 @@ dashboard_api_host_port=nil
 if not ENV["DASHBOARD_API_HOST_PORT"].nil?
   dashboard_api_host_port=ENV["DASHBOARD_API_HOST_PORT"]
 
-# Else check for users api hosts settings
-elsif ENV["DASHBOARD_API_HOST_PORT"].nil? and not ENV["GITLAB_USER_EMAIL"].nil? and ENV["BASE_URL"] == "https://gitlab.dev.cncf.ci"
-  puts "Checking settings for dev user #{ENV['GITLAB_USER_EMAIL']}"
-
-  begin
-    if File.exists?('bin/dev_users.rb')
-      require_relative 'dev_users.rb' 
-      include CrossCloudCI::DashboardUtils
-      dashboard_api_host_port = CrossCloudCI::DashboardUtils.load_users_api_host_port
-    end 
-  rescue LoadError
-    # Ignoring load errors, dev users is optional
-    puts "WARNING: faied to load dev users"
-  end
-end
-
 # Else use the default API host (if it is set)
-if dashboard_api_host_port.nil?
-  if ENV["BASE_URL"] == "https://gitlab.staging.cncf.ci"
-    dashboard_api_host_port=ENV["STAGING_DASHBOARD_API_HOST_PORT"] unless ENV["STAGING_DASHBOARD_API_HOST_PORT"].nil?
-  elsif ENV["BASE_URL"] == "https://gitlab.cncf.ci"
-    dashboard_api_host_port=ENV["PRODUCTION_DASHBOARD_API_HOST_PORT"] unless ENV["PRODUCTION_DASHBOARD_API_HOST_PORT"].nil?
-  else
-    dashboard_api_host_port=ENV["DEFAULT_DASHBOARD_API_HOST_PORT"] unless ENV["DEFAULT_DASHBOARD_API_HOST_PORT"].nil?
-  end
+elsif ENV["BASE_URL"] == "https://gitlab.staging.cncf.ci" and not ENV["STAGING_DASHBOARD_API_HOST_PORT"].nil?
+  dashboard_api_host_port=ENV["STAGING_DASHBOARD_API_HOST_PORT"] 
+elsif ENV["BASE_URL"] == "https://gitlab.cncf.ci" and not ENV["PRODUCTION_DASHBOARD_API_HOST_PORT"].nil?
+  dashboard_api_host_port=ENV["PRODUCTION_DASHBOARD_API_HOST_PORT"]
+else
+  dashboard_api_host_port=ENV["DEFAULT_DASHBOARD_API_HOST_PORT"] unless ENV["DEFAULT_DASHBOARD_API_HOST_PORT"].nil?
 end
+
+check_required(dashboard_api_host_port, "Set DASHBOARD_API_HOST_PORT / DEFAULT_DASHBOARD_API_HOST_PORT environment setting", 1)
 
 puts "Using Dashboard API server #{dashboard_api_host_port}"
 
@@ -175,7 +159,6 @@ source_pipeline_job_id = ENV["CI_JOB_ID"]
 
 target_cloud=ENV["CLOUD"]
 
-check_required(dashboard_api_host_port, "Set DASHBOARD_API_HOST_PORT / DEFAULT_DASHBOARD_API_HOST_PORT environment setting", 1)
 check_required(source_project_id, "Set CI_PROJECT_ID environment setting", 1)
 check_required(source_pipeline_id,"Set CI_PIPELINE_ID environment setting", 1)
 check_required(pipeline_release_type, "Set PIPELINE_RELEASE_TYPE environment setting", 1)
