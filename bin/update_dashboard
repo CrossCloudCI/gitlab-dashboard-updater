@@ -19,7 +19,17 @@ require 'securerandom'
 require 'jwt'
 require 'pp'
 
-cross_cloud_config_url="https://gitlab.cncf.ci/cncf/cross-cloud/raw/ci-stable-v0.1.0/cross-cloud.yml"
+case ENV["CROSS_CLOUD_CI_ENV"]
+when "cidev"
+  cross_cloud_config_url="https://raw.githubusercontent.com/crosscloudci/cncf-configuration/integration/cross-cloud.yml"
+when "staging"
+  cross_cloud_config_url="https://raw.githubusercontent.com/crosscloudci/cncf-configuration/staging/cross-cloud.yml"
+when "production"
+  cross_cloud_config_url="https://raw.githubusercontent.com/crosscloudci/cncf-configuration/production/cross-cloud.yml"
+# Default
+else
+  cross_cloud_config_url="https://raw.githubusercontent.com/crosscloudci/cncf-configuration/master/cross-cloud.yml"
+end
 
 ##############################################################################
 
@@ -90,8 +100,6 @@ else
 end
 
 puts "Project build pipeline id: #{project_build_pipeline_id}"
-
-
 
 # Set stable and head ref based on project name
 stable_ref=cross_cloud_config["projects"][target_project_name.downcase]["stable_ref"]
