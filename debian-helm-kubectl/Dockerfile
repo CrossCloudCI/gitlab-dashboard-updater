@@ -2,7 +2,7 @@ FROM buildpack-deps:stretch
 
 ARG VERSION=v2.7.2
 ARG FILENAME=helm-${VERSION}-linux-amd64.tar.gz
-ARG KUBECTL=v1.9.0
+ARG KUBECTL=v1.7.12
 
 WORKDIR /
 
