@@ -219,6 +219,8 @@ end
 
 retries=5
 
+# TODO: Refactor to use Faraday retry http://www.rubydoc.info/github/lostisland/faraday/Faraday/Request/Retry
+
 begin
   cidashboard = Faraday.new(:url => dashboard_api_url)
 
@@ -241,7 +243,10 @@ begin
 rescue Faraday::ConnectionFailed => e
   if retries > 0
     puts "ERROR: API server #{dashboard_api_host_port} not responding -- #{e}"
-    puts "       trying #{tries} more times"
+    puts "-------------"
+    puts "#{e.backtrace}"
+    puts "-------------"
+    puts "       trying #{retries} more times"
     retries -= 1
     sleep 2
     retry
