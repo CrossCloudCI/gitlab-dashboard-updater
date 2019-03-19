@@ -36,6 +36,8 @@ pipeline_release_type = nil
 source_pipeline_job_id = nil
 target_project_name = nil
 project_build_pipeline_id = nil
+provision_pipeline_id = nil
+kubernetes_release_type = nil
 
 # case ENV["CROSS_CLOUD_CI_ENV"]
 # when "cidev"
@@ -82,6 +84,8 @@ case ENV["CI_PROJECT_NAME"]
 when "cross-cloud", "cross-project"
   target_project_name=ENV["TARGET_PROJECT_NAME"]
   project_build_pipeline_id=ENV["PROJECT_BUILD_PIPELINE_ID"]
+  provision_pipeline_id=ENV["PROVISION_PIPELINE_ID"]
+  kubernetes_release_type=ENV["KUBERNETES_RELEASE_TYPE"]
 
   check_required(target_project_name, "ERROR: target project name required -- not available from TARGET_PROJECT_NAME", 1)
   check_required(project_build_pipeline_id, "ERROR: target project build pipeline id required -- not available from env PROJECT_BUILD_PIPELINE_ID", 1)
@@ -99,6 +103,8 @@ when "cross-cloud", "cross-project"
     end
   elsif ENV["CI_PROJECT_NAME"] == "cross-project"
     child_pipeline=false
+    check_required(provision_pipeline_id, "ERROR: provision pipeline id required -- not available from env PROVISION_PIPELINE_ID", 1)
+    check_required(kubernetes_release_type, "ERROR: kubernetes release type required -- not available from env KUBERNETES_RELEASE_TYPE", 1)
   end
 else
   child_pipeline=false
@@ -189,6 +195,8 @@ json_data=<<-EOD
       "project_build_pipeline_id":"#{project_build_pipeline_id}",
       "target_project_name":"#{target_project_name}",
       "child_pipeline":"#{child_pipeline}",
+      "provision_pipeline_id":"#{provision_pipeline_id}",
+      "kubernetes_release_type":"#{kubernetes_release_type}",
       "cloud":"#{target_cloud}"
     }
 }
