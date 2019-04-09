@@ -17,7 +17,7 @@ require 'faraday'
 require 'base64'
 require 'securerandom'
 require 'jwt'
-require 'URI'
+require 'uri'
 require 'pp'
 
 ##############################################################################
