@@ -17,6 +17,7 @@ require 'faraday'
 require 'base64'
 require 'securerandom'
 require 'jwt'
+require 'uri'
 require 'pp'
 
 ##############################################################################
@@ -181,7 +182,19 @@ check_required(pipeline_release_type, "Set PIPELINE_RELEASE_TYPE environment set
 check_required(source_pipeline_job_id, "Set CI_JOB_ID environment setting", 1)
 check_required(target_cloud, "Set CLOUD environment setting", 1)
 
-dashboard_api_url="https://#{dashboard_api_host_port}/api/source_key_project_monitor"
+# If protocol not set, default to https, otherwise use what's passed
+# NOTE: To use HTTP use `export DASHBOARD_API_HOST_PORT=http://apihost`
+uri = URI.parse(dashboard_api_host_port)
+case uri.scheme
+when 'https','http'
+  puts "NOTE: Using scheme #{uri.scheme} from #{dashboard_api_host_port}"
+  uristart=""
+else
+  puts "Using https with #{dashboard_api_host_port}"
+  uristart='https://'
+end
+
+dashboard_api_url="#{uristart}#{dashboard_api_host_port}/api/source_key_project_monitor"
 
 puts "Project build pipeline id: #{project_build_pipeline_id}"
 
