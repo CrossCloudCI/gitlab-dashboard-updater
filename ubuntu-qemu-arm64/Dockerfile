@@ -1,4 +1,4 @@
-FROM arm64v8/ubuntu:disco
+FROM crosscloudci/ubuntu-openjdk-arm64:disco
 
 RUN apt update \
     && apt install -y ca-certificates
@@ -17,7 +17,7 @@ RUN ln -s /usr/bin/python3 /usr/bin/python
 COPY qemu-3.1.0.sh /
 RUN ./qemu-3.1.0.sh
 RUN cp /opt/qemu/bin/qemu-arm /usr/bin/
-RUN cp /opt/qemu/bin/qemu-arm /usr/bin/
+RUN cp /opt/qemu/bin/qemu-aarch64 /usr/bin/
 RUN ln -s /usr/bin/qemu-arm /usr/bin/qemu-arm-static
 RUN ln -s /usr/bin/qemu-aarch64 /usr/bin/qemu-aarch64-static
 
