@@ -1,7 +1,7 @@
-FROM crosscloudci/ubuntu-qemu-arm64:disco
+FROM crosscloudci/ubuntu-qemu-arm64:disco_jdk
 
 #Install Bazel Deps
-RUN apt install -y git openjdk-8-jdk pkg-config zip zlib1g-dev unzip autoconf automake libtool swig software-properties-common
+RUN apt install -y git pkg-config zip zlib1g-dev unzip autoconf automake libtool swig software-properties-common
 
 RUN pip3 install wheel
 
@@ -14,8 +14,6 @@ RUN apt install -y g++-7 \
     && update-alternatives --config gcc \
     && update-alternatives --config g++ \
     && update-alternatives --config gcov
-
-
 
 RUN wget https://github.com/bazelbuild/bazel/releases/download/0.25.0/bazel-0.25.0-dist.zip
 
