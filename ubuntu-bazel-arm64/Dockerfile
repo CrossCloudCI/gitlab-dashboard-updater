@@ -23,6 +23,8 @@ WORKDIR bazel-0.25.0
 
 RUN chmod u+w ./* -R 
 
+RUN sleep 10000000
+
 RUN export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-arm64 \
     && EXTRA_BAZEL_ARGS="--host_javabase=@local_jdk//:jdk" ./compile.sh
 
