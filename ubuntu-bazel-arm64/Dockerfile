@@ -10,12 +10,13 @@ RUN apt install -y wget patch bzip2 gawk patch zlib1g-dev libyaml-dev libsqlite3
 
 
 # Install qemu static
+RUN apt install make python3-pip python3-numpy python3-dev
 COPY qemu-3.1.0.sh /
 RUN ./qemu-3.1.0.sh
 
 
 #Install Bazel Deps
-RUN apt install -y git openjdk-8-jdk pkg-config zip zlib1g-dev unzip autoconf automake libtool python3-pip python3-numpy swig python3-dev software-properties-common
+RUN apt install -y git openjdk-8-jdk pkg-config zip zlib1g-dev unzip autoconf automake libtool swig software-properties-common
 
 RUN pip3 install wheel
 
