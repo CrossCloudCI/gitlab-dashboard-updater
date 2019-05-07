@@ -11,6 +11,7 @@ RUN apt install -y wget patch bzip2 gawk patch zlib1g-dev libyaml-dev libsqlite3
 
 # Install qemu static
 RUN apt install -y make python3-pip python3-numpy python3-dev
+RUN ln -s /usr/bin/python3 /usr/bin/python
 COPY qemu-3.1.0.sh /
 RUN ./qemu-3.1.0.sh
 
@@ -40,7 +41,6 @@ WORKDIR bazel-0.25.0
 
 RUN chmod u+w ./* -R 
 
-RUN ln -s /usr/bin/python3 /usr/bin/python
 RUN export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-arm64 \
     && EXTRA_BAZEL_ARGS="--host_javabase=@local_jdk//:jdk" ./compile.sh
 
