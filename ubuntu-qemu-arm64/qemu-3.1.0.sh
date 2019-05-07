@@ -7,6 +7,3 @@ cd qemu-3.1.0
 ./configure --target-list=arm-linux-user,aarch64-linux-user --prefix=/opt/qemu --static
 make
 make install
-cd /opt/qemu/bin
-ln -s qemu-arm qemu-arm-static
-ln -s qemu-aarch64 qemu-aarch64-static
