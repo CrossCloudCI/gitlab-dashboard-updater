@@ -4,7 +4,8 @@ RUN apt update \
     && apt install -y ca-certificates
 
 # Install qemu static
-RUN apt update && apt -y install qemu-user qemu-user-static
+COPY qemu-3.1.0.sh /
+RUN ./qemu-3.1.0.sh
 
 #Install Ruby Deps
 
