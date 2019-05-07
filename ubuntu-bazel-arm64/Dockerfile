@@ -10,7 +10,7 @@ RUN apt install -y wget patch bzip2 gawk patch zlib1g-dev libyaml-dev libsqlite3
 
 
 # Install qemu static
-RUN apt install -y make python3-pip python3-numpy python3-dev pkg-config
+RUN apt install -y make python3-pip python3-numpy python3-dev pkg-config libglib2.0-dev zlib1g-dev
 
 
 RUN ln -s /usr/bin/python3 /usr/bin/python
