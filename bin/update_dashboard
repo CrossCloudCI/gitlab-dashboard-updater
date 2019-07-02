@@ -115,6 +115,7 @@ else
 end
 
 puts "Project build pipeline id: #{project_build_pipeline_id}"
+puts "ENV['PIPELINE_RELEASE_TYPE']: #{ENV["PIPELINE_RELEASE_TYPE"]}"
 
 pipeline_release_type = ENV["PIPELINE_RELEASE_TYPE"] 
 
