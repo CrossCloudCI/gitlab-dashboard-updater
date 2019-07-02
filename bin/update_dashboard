@@ -121,7 +121,7 @@ puts "ENV['PIPELINE_RELEASE_TYPE']: #{ENV['PIPELINE_RELEASE_TYPE']}"
 
 pipeline_release_type = ENV["PIPELINE_RELEASE_TYPE"] 
 
-unless pipeline_release_type do
+unless pipeline_release_type 
   # Set stable and head ref based on project name
   stable_ref=cross_cloud_config["projects"][target_project_name.downcase]["stable_ref"]
   head_ref=cross_cloud_config["projects"][target_project_name.downcase]["head_ref"]
