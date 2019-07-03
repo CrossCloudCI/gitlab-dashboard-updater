@@ -52,7 +52,6 @@ kubernetes_release_type = nil
 #   cross_cloud_config_url="https://raw.githubusercontent.com/crosscloudci/cncf-configuration/master/cross-cloud.yml"
 # end
 
-puts "#103-1"
 # If the Dashboard host and port is set then use that
 if not ENV["CROSS_CLOUD_YML"].nil?
   cross_cloud_config_url=ENV["CROSS_CLOUD_YML"]
@@ -116,7 +115,6 @@ else
 end
 
 puts "Project build pipeline id: #{project_build_pipeline_id}"
-puts "#103"
 puts "ENV['PIPELINE_RELEASE_TYPE']: #{ENV['PIPELINE_RELEASE_TYPE']}"
 
 pipeline_release_type = ENV["PIPELINE_RELEASE_TYPE"] 
