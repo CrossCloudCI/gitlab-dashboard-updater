@@ -1,4 +1,4 @@
-FROM golang:1.13-rc-buster
+FROM golang:1.12.6-stretch
 
 #Install Ruby Deps
 
