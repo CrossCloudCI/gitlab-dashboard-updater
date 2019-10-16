@@ -1,8 +1,8 @@
 FROM buildpack-deps:stretch
 
-ARG VERSION=v2.13.1
+ARG VERSION=v2.14.3
 ARG FILENAME=helm-${VERSION}-linux-amd64.tar.gz
-ARG KUBECTL=v1.13.0
+ARG KUBECTL=v1.16.2
 
 WORKDIR /
 
