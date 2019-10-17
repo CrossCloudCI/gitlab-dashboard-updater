@@ -1,4 +1,4 @@
-FROM golang:1.12.6-stretch
+FROM golang:1.13.1-stretch
 
 #Install Ruby Deps
 
