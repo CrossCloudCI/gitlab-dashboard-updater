@@ -1,4 +1,4 @@
-FROM golang:1.12.1-stretch
+FROM golang:1.13.1-stretch
 
 RUN apt update \
     && apt install -y ca-certificates
