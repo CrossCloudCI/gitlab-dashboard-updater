@@ -1,11 +1,13 @@
-FROM ruby:2.5-stretch
+FROM ruby:latest
+
+RUN gem install bundler -v 1.11.2
 
 RUN apt update \
     && apt install -y ca-certificates
 
 #Install Ruby Deps
 
-RUN apt install -y patch bzip2 gawk patch zlib1g-dev libyaml-dev libsqlite3-dev sqlite3 autoconf libgdbm-dev libncurses5-dev automake libtool bison libffi-dev libgmp-dev libreadline6-dev libssl1.0-dev
+RUN apt install -y patch bzip2 gawk patch zlib1g-dev libyaml-dev libsqlite3-dev sqlite3 autoconf libgdbm-dev libncurses5-dev automake libtool bison libffi-dev libgmp-dev libreadline6-dev 
 
 # set up nsswitch.conf for Go's "netgo" implementation (which Docker explicitly uses)
 # - https://github.com/docker/docker-ce/blob/v17.09.0-ce/components/engine/hack/make.sh#L149
